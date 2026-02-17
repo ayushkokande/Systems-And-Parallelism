@@ -24,10 +24,10 @@ Visually, it should look something like:
 
 ``` sh
 .
-├── cs336_basics  # A python module named cs336_basics
+├── a1-basics  # A python module named cs336_basics
 │   ├── __init__.py
 │   └── ... other files in the cs336_basics module, taken from assignment 1 ...
-├── cs336_systems  # TODO(you): code that you'll write for assignment 2 
+├── student  # TODO(you): code that you'll write for assignment 2 
 │   ├── __init__.py
 │   └── ... TODO(you): any other files or folders you need for assignment 2 ...
 ├── README.md
@@ -35,23 +35,23 @@ Visually, it should look something like:
 └── ... TODO(you): other files or folders you need for assignment 2 ...
 ```
 
-If you would like to use your own implementation of assignment 1, replace the `cs336-basics`
+If you would like to use your own implementation of assignment 1, replace the `a1-basics`
 directory with your own implementation, or edit the outer `pyproject.toml` file to point to your
 own implementation.
 
-0. We use `uv` to manage dependencies. You can verify that the code from the `cs336-basics`
+0. We use `uv` to manage dependencies. You can verify that the code from the `a1-basics`
 package is accessible by running:
 
 ```sh
 $ uv run python
 Using CPython 3.12.10
 Creating virtual environment at: /path/to/uv/env/dir
-      Built cs336-systems @ file:///path/to/systems/dir
-      Built cs336-basics @ file:///path/to/basics/dir
+      Built student @ file:///path/to/systems/dir
+      Built a1-basics @ file:///path/to/basics/dir
 Installed 85 packages in 711ms
 Python 3.12.10 (main, Apr  9 2025, 04:03:51) [Clang 20.1.0 ] on linux
 ...
->>> import cs336_basics
+>>> import a1_basics
 >>> 
 ```
 
