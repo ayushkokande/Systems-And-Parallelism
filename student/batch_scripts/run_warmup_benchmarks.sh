@@ -12,15 +12,14 @@ singularity exec --bind /scratch --nv \
 --overlay /scratch/ak13124/overlay-25GB-500K.ext3:ro \
 /scratch/ak13124/ubuntu-20.04.3.sif \
 /bin/bash -c "
-# Initialize the environment
+
+
 source /ext3/miniconda3/etc/profile.d/conda.sh
 export PATH=/ext3/miniconda3/bin:\$PATH
 set -euo pipefail
 
-# Navigate to your working directory
 cd /scratch/ak13124/a2
 
-# Run your three benchmarking jobs sequentially
 echo 'Starting warmup 0...'
 uv run python -m student.benchmark --size all --context-length 128 --warmup-steps 0 --measure-steps 10 --output-csv benchmark_results_c_warmup0.csv
 
