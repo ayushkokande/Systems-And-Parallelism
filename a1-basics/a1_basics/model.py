@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import json
 import logging
 import math
@@ -32,12 +31,12 @@ class Linear(nn.Module):
         
         super().__init__()
         std = math.sqrt(2 / (d_in + d_out))
-        self.weight: Float[Tensor, " d_out d_in"] = nn.Parameter(
+        self.weight: Float[Tensor, " d_out d_in"] = nn.Parameter( # type: ignore
             nn.init.trunc_normal_(torch.empty(d_out, d_in), std=std, a=-3*std, b=3*std),
             requires_grad=True
         )
 
-    def forward(self, x: Float[Tensor, " ... d_in"]) -> Float[Tensor, " ... d_out"]:
+    def forward(self, x: Float[Tensor, " ... d_in"]) -> Float[Tensor, " ... d_out"]: # type: ignore
         return einsum(x, self.weight, "... d_in, d_out d_in -> ... d_out")
     
     def extra_repr(self):
@@ -53,8 +52,8 @@ class Embedding(nn.Module):
             requires_grad=True
         )
     
-    def forward(self, token_ids: Int[Tensor, " ..."]) -> Float[Tensor, " ... d_model"]:
-        return self.weight[token_ids, :]
+    def forward(self, token_ids: Int[Tensor, " ..."]) -> Float[Tensor, " ... d_model"]: # type: ignore
+        return self.weight[token_ids, :] 
     
     def extra_repr(self):
         return f"vocab_size={self.weight.shape[0]}, d={self.weight.shape[1]}"
@@ -119,7 +118,7 @@ class RotaryEmbedding(nn.Module):
         )
     
     @staticmethod
-    def _init_cache(context_length: int, dim: int, theta: float) -> Float[Tensor, " 2 context_length half_dim"]:
+    def _init_cache(context_length: int, dim: int, theta: float) -> Float[Tensor, " 2 context_length half_dim"]: # type: ignore
         assert dim % 2 == 0
 
         d = torch.arange(0, dim, 2) / dim
@@ -131,7 +130,8 @@ class RotaryEmbedding(nn.Module):
         cos, sin = torch.cos(freqs), torch.sin(freqs)
         return torch.stack((cos, sin))
 
-    def forward(self, x: Float[Tensor, " ... seq d"], pos_ids: Int[Tensor, " ... seq"]) -> Float[Tensor, " ... seq d"]:
+    def forward(self, x: Float[Tensor, " ... seq d"], # type: ignore
+     pos_ids: Int[Tensor, " ... seq"]) -> Float[Tensor, " ... seq d"]: # type: ignore
         x1, x2 = rearrange(x, '... (half_d xy) -> xy ... half_d', xy=2)
 
         # Standard
@@ -228,7 +228,7 @@ class BasicsTransformerLM(nn.Module):
 
         return n_params
 
-    def forward(self, x: Int[Tensor, " ... sequence_length"]) -> Float[Tensor, " ... sequence_length vocab_size"]:
+    def forward(self, x: Int[Tensor, " ... sequence_length"]) -> Float[Tensor, " ... sequence_length vocab_size"]: # type: ignore
         """
         Args:
             x: Input IDs for language modeling.
@@ -398,11 +398,11 @@ class SwiGLU(nn.Module):
 
 
 def scaled_dot_product_attention(
-    Q: Float[Tensor, " ... queries d_k"],
-    K: Float[Tensor, " ... keys    d_k"],
-    V: Float[Tensor, " ... keys    d_v"],
-    mask: Bool[Tensor, " ... queries keys"] | None = None,
-) -> Float[Tensor, " ... queries d_v"]:
+    Q: Float[Tensor, " ... queries d_k"], # type: ignore
+    K: Float[Tensor, " ... keys    d_k"], # type: ignore
+    V: Float[Tensor, " ... keys    d_v"], # type: ignore
+    mask: Bool[Tensor, " ... queries keys"] | None = None, # type: ignore
+) -> Float[Tensor, " ... queries d_v"]: # type: ignore
     """Scaled dot-product attention.
 
     This function implements Eq. 1 of the Transformer paper.
@@ -475,7 +475,7 @@ class CausalMultiHeadSelfAttention(nn.Module):
 
         self.positional_encoder = positional_encoder  # RoPE
 
-    def forward(self, x: Float[Tensor, " ... seq d_k"], token_positions: Int[Tensor, " ... seq"] | None = None) -> Float[Tensor, " ... seq d_v"]:
+    def forward(self, x: Float[Tensor, " ... seq d_k"], token_positions: Int[Tensor, " ... seq"] | None = None) -> Float[Tensor, " ... seq d_v"]: # type: ignore
         """
         Args:
             x: The input to perform multi-headed self-attention on.
