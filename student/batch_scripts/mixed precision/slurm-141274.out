@@ -1,0 +1,40 @@
+Created submit_bench_small_ctx128.slurm
+Submitted batch job 141275
+Created submit_bench_small_ctx256.slurm
+Submitted batch job 141276
+Created submit_bench_small_ctx512.slurm
+Submitted batch job 141277
+Created submit_bench_small_ctx1024.slurm
+Submitted batch job 141278
+Created submit_bench_medium_ctx128.slurm
+Submitted batch job 141279
+Created submit_bench_medium_ctx256.slurm
+Submitted batch job 141280
+Created submit_bench_medium_ctx512.slurm
+Submitted batch job 141281
+Created submit_bench_medium_ctx1024.slurm
+Submitted batch job 141282
+Created submit_bench_large_ctx128.slurm
+Submitted batch job 141283
+Created submit_bench_large_ctx256.slurm
+Submitted batch job 141284
+Created submit_bench_large_ctx512.slurm
+Submitted batch job 141285
+Created submit_bench_large_ctx1024.slurm
+Submitted batch job 141286
+Created submit_bench_xl_ctx128.slurm
+Submitted batch job 141287
+Created submit_bench_xl_ctx256.slurm
+Submitted batch job 141288
+Created submit_bench_xl_ctx512.slurm
+Submitted batch job 141289
+Created submit_bench_xl_ctx1024.slurm
+Submitted batch job 141290
+Created submit_bench_2.7B_ctx128.slurm
+Submitted batch job 141291
+Created submit_bench_2.7B_ctx256.slurm
+Submitted batch job 141292
+Created submit_bench_2.7B_ctx512.slurm
+Submitted batch job 141293
+Created submit_bench_2.7B_ctx1024.slurm
+Submitted batch job 141294

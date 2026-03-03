@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Iterable
 
-import torch
+import torch  # pyre-ignore[21]
 
 
 def get_cosine_lr(

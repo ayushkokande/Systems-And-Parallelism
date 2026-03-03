@@ -1,5 +1,5 @@
 """
-Benchmarking script for the Basics Transformer model.
+Memory profiling script for the Basics Transformer model.
 Times forward and backward passes across different model sizes.
 """
 
@@ -12,6 +12,7 @@ import torch
 import pandas as pd
 
 from a1_basics.model import BasicsTransformerLM
+from a1_basics.optimizer import AdamW
 
 MODEL_CONFIGS = {
     "small": {"d_model": 768, "d_ff": 3072, "num_layers": 12, "num_heads": 12},
@@ -25,7 +26,7 @@ VOCAB_SIZE = 10_000
 BATCH_SIZE = 4
 
 
-def benchmark_model(cfg, context_length, warmup_steps, measure_steps, forward_only, device, mixed_precision=False):
+def benchmark_model(cfg, context_length, warmup_steps, measure_steps, forward_only, device, mixed_precision=False, profile_memory=False, size_label="2.7B"):
     model = BasicsTransformerLM(
         vocab_size=VOCAB_SIZE,
         context_length=context_length,
@@ -36,21 +37,30 @@ def benchmark_model(cfg, context_length, warmup_steps, measure_steps, forward_on
         rope_theta=10000.0,
     ).to(device)
 
-    num_params = sum(p.numel() for p in model.parameters())
+    optimizer = AdamW(model.parameters()) if not forward_only else None
     input_ids = torch.randint(0, VOCAB_SIZE, (BATCH_SIZE, context_length), device=device)
 
-    ctx = (torch.autocast(device_type ="cuda", dtype = torch.bfloat16) if mixed_precision else nullcontext())
+    ctx = (torch.autocast(device_type="cuda", dtype=torch.bfloat16) if mixed_precision else nullcontext())
 
     def step():
+        if optimizer is not None:
+            optimizer.zero_grad(set_to_none=True)
+        else:
+            model.zero_grad(set_to_none=True)
         with ctx:
             logits = model(input_ids)
         if not forward_only:
             logits.sum().backward()
+            optimizer.step()
         torch.cuda.synchronize()
 
     for _ in range(warmup_steps):
         step()
-        model.zero_grad(set_to_none=True)
+    
+    if profile_memory:
+        torch.cuda.memory._record_memory_history(max_entries=1000000)
+
+    torch.cuda.reset_peak_memory_stats(device)
 
     times = []
     for _ in range(measure_steps):
@@ -58,15 +68,23 @@ def benchmark_model(cfg, context_length, warmup_steps, measure_steps, forward_on
         step()
         t1 = timeit.default_timer()
         times.append((t1 - t0) * 1000)
-        model.zero_grad(set_to_none=True)
+
+    peak_bytes = torch.cuda.max_memory_allocated(device)
+    peak_mb = peak_bytes / (1024**2)
 
     mean = sum(times) / len(times)
     std = math.sqrt(sum((t - mean) ** 2 for t in times) / len(times))
+
+    if profile_memory:
+        snapshot_name = f"memory_{size_label}_ctx{context_length}_{'fwd' if forward_only else 'train'}.pickle"
+        torch.cuda.memory._dump_snapshot(snapshot_name)
+        torch.cuda.memory._record_memory_history(enabled=None)
+        print(f"  Snapshot saved: {snapshot_name}")
+
     return {
-        "mode": "forward" if forward_only else "forward+backward",
-        "num_params_m": num_params / 1e6,
+        "mode": "forward" if forward_only else "train",
         "mean_ms": mean,
-        "std_ms": std,
+        "peak_mb": peak_mb, 
     }
 
 
@@ -78,6 +96,7 @@ def main():
     parser.add_argument("--measure-steps", type=int, default=10)
     parser.add_argument("--forward-only", action="store_true")
     parser.add_argument("--mixed-precision", action="store_true", help="Run with BF16 mixed precision")
+    parser.add_argument("--profile-memory", action="store_true")
     parser.add_argument("--output-csv", type=str, default=None)
     args = parser.parse_args()
 
@@ -90,50 +109,42 @@ def main():
     props = torch.cuda.get_device_properties(device)
     print(f"Device: {device}")
     print(f"  GPU: {props.name} ({props.total_memory / 1e9:.1f} GB)")
-    if args.mixed_precision:
-        print("  Mixed precision: BF16 (torch.autocast)")
-    else:
-        print("  Mixed precision: Disabled")
-
+    
     rows = []
     for name in args.size:
         cfg = MODEL_CONFIGS[name]
         print(f"\n{'=' * 60}")
-        print(f"Benchmarking: {name} (d_model={cfg['d_model']}, layers={cfg['num_layers']}, "
-              f"heads={cfg['num_heads']}, d_ff={cfg['d_ff']})")
-        print(f"  context_length={args.context_length}, warmup={args.warmup_steps}, "
-              f"measure={args.measure_steps}")
+        print(f"Benchmarking: {name}")
+        print(f"  context_length={args.context_length}, mixed_precision={args.mixed_precision}")
         print(f"{'=' * 60}")
 
-        modes = [True] if args.forward_only else [True, False]
-        for fwd_only in modes:
-            result = benchmark_model(cfg, args.context_length, args.warmup_steps,
-                                     args.measure_steps, fwd_only, device, args.mixed_precision)
+        # --forward-only: run forward pass only. No flag: run full training step (fwd + backward + optimizer)
+        forward_only = args.forward_only
+        try:
+            result = benchmark_model(
+                cfg, args.context_length, args.warmup_steps,
+                args.measure_steps, forward_only, device,
+                args.mixed_precision, args.profile_memory, size_label=name
+            )
             rows.append({
                 "size_label": name,
                 "mode": result["mode"],
-                "num_params_m": result["num_params_m"],
-                "warmup_steps": args.warmup_steps,
-                "measure_steps": args.measure_steps,
                 "mean_ms": result["mean_ms"],
-                "std_ms": result["std_ms"],
+                "peak_mb": result["peak_mb"],
                 "context_length": args.context_length,
                 "mixed_precision": args.mixed_precision,
             })
-            print(f"  {result['mode']:20s}  mean={result['mean_ms']:8.2f} ms  "
-                  f"std={result['std_ms']:6.2f} ms  params={result['num_params_m']:.1f}M")
+            print(f"  {result['mode']:30s}  mean={result['mean_ms']:8.2f} ms  peak={result['peak_mb']:.1f} MB")
+        except torch.cuda.OutOfMemoryError:
+            print(f"  {name} - {'forward' if forward_only else 'train'}: OOM (skipping)")
+            torch.cuda.empty_cache()
 
     df = pd.DataFrame(rows)
-
-    print(f"\n{'=' * 60}")
-    print("RESULTS SUMMARY")
-    print(f"{'=' * 60}")
+    print("\n=== results ===")
     print(df.to_string(index=False))
-
     if args.output_csv:
         df.to_csv(args.output_csv, index=False)
-        print(f"\nResults saved to {args.output_csv}")
-
+        print(f"saved to {args.output_csv}")
 
 if __name__ == "__main__":
     main()

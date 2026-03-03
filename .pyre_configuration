@@ -1,0 +1,11 @@
+{
+  "site_package_search_strategy": "pep561",
+  "search_path": [
+    {
+      "site-package": "/Users/kokande/Desktop/Semester 2/Building LLM Reasoners/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages"
+    },
+    "a1-basics"
+  ],
+  "python_version": "3.12",
+  "venv": ".venv"
+}

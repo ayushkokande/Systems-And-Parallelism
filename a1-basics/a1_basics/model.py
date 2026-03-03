@@ -4,16 +4,16 @@ import json
 import logging
 import math
 import os
-from einops import rearrange, einsum
+from einops import rearrange, einsum # pyre-ignore[21]
 import einx
 
-import torch
+import torch # pyre-ignore[21]
 import torch.nn as nn
-from torch import Tensor
-from jaxtyping import Float, Bool, Int
+from torch import Tensor # pyre-ignore[21]
+from jaxtyping import Float, Bool, Int 
 
 
-from .nn_utils import softmax
+from .nn_utils import softmax # pyre-ignore[21]
 
 logger = logging.getLogger(__name__)
 
