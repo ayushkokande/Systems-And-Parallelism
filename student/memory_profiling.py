@@ -113,7 +113,6 @@ def main():
         print(f"  context_length={args.context_length}, mixed_precision={args.mixed_precision}")
         print(f"{'=' * 60}")
 
-        # --forward-only: run forward pass only. No flag: run full training step (fwd + backward + optimizer)
         forward_only = args.forward_only
         try:
             result = benchmark_model(

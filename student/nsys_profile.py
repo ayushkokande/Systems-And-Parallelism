@@ -1,7 +1,3 @@
-"""
-profiling script for transformer model
-"""
-
 import argparse
 import math
 import timeit
@@ -141,8 +137,8 @@ def main():
     parser.add_argument("--context-length", type=int, nargs="+", default=[128, 256, 512, 1024])
     parser.add_argument("--warmup-steps", type=int, default=5)
     parser.add_argument("--measure-steps", type=int, default=10)
-    parser.add_argument("--forward-only", action="store_true")# store_true means the argument is a boolean and will be set to True if the argument is present
-    parser.add_argument("--optimizer-step", action="store_true")# store_true means the argument is a boolean and will be set to True if the argument is present
+    parser.add_argument("--forward-only", action="store_true")
+    parser.add_argument("--optimizer-step", action="store_true")
     parser.add_argument("--nvtx", action="store_true")
     parser.add_argument("--output-csv", type=str, default=None)
     args = parser.parse_args()

@@ -63,62 +63,37 @@ def _flash_attention_forward(q, k, v, is_causal, block_size=64):
     return O, L
 
 
-def _flash_attention_backward(q, k, v, O, L, do, is_causal, block_size=64):
-    *batch_dims, n_queries, d = q.shape
-    n_keys = k.shape[-2]
-    scale = 1.0 / math.sqrt(d)
+def _flash_backward_impl(q, k, v, O, L, do, is_causal):
+    scale = 1.0 / math.sqrt(q.shape[-1])
 
-    q_flat = q.reshape(-1, n_queries, d)
-    k_flat = k.reshape(-1, n_keys, d)
-    v_flat = v.reshape(-1, n_keys, d)
-    O_flat = O.reshape(-1, n_queries, d)
-    do_flat = do.reshape(-1, n_queries, d)
-    L_flat = L.reshape(-1, n_queries)
+    # Eq 13-14: recompute S and P from saved Q, K, L
+    S = torch.matmul(q, k.transpose(-2, -1)) * scale
+    if is_causal:
+        q_idx = torch.arange(S.shape[-2], device=S.device).unsqueeze(1)
+        k_idx = torch.arange(S.shape[-1], device=S.device).unsqueeze(0)
+        S = torch.where(q_idx >= k_idx, S, float('-inf'))
+    P = torch.exp(S - L.unsqueeze(-1))
 
-    D = (O_flat * do_flat).sum(dim=-1)
+    D = (O * do).sum(dim=-1)  # rowsum(O * dO)
 
-    batch = q_flat.shape[0]
-    Br = min(block_size, n_queries)
-    Bc = min(block_size, n_keys)
-
-    dq = torch.zeros_like(q_flat)
-    dk = torch.zeros_like(k_flat)
-    dv = torch.zeros_like(v_flat)
-
-    for i in range(0, n_queries, Br):
-        i_end = min(i + Br, n_queries)
-        q_i = q_flat[:, i:i_end, :]
-        do_i = do_flat[:, i:i_end, :]
-        L_i = L_flat[:, i:i_end]
-        D_i = D[:, i:i_end]
-
-        for j in range(0, n_keys, Bc):
-            j_end = min(j + Bc, n_keys)
-            k_j = k_flat[:, j:j_end, :]
-            v_j = v_flat[:, j:j_end, :]
-
-            S_ij = einsum(q_i, k_j, "b q d, b k d -> b q k") * scale
-
-            if is_causal:
-                q_idx = torch.arange(i, i_end, device=q.device).view(1, -1, 1)
-                k_idx = torch.arange(j, j_end, device=q.device).view(1, 1, -1)
-                causal_mask = q_idx >= k_idx
-                S_ij = torch.where(causal_mask, S_ij, float("-inf"))
-
-            P_ij = torch.exp(S_ij - L_i.unsqueeze(-1))
-
-            dv[:, j:j_end, :] += einsum(P_ij, do_i, "b q k, b q d -> b k d")
-            dP_ij = einsum(do_i, v_j, "b q d, b k d -> b q k")
-            dS_ij = P_ij * (dP_ij - D_i.unsqueeze(-1))
-
-            dq[:, i:i_end, :] += einsum(dS_ij, k_j, "b q k, b k d -> b q d") * scale
-            dk[:, j:j_end, :] += einsum(dS_ij, q_i, "b q k, b q d -> b k d") * scale
-
-    dq = dq.reshape(*batch_dims, n_queries, d)
-    dk = dk.reshape(*batch_dims, n_keys, d)
-    dv = dv.reshape(*batch_dims, n_keys, d)
+    # Eq 15-19
+    dv = torch.matmul(P.transpose(-2, -1), do)
+    dP = torch.matmul(do, v.transpose(-2, -1))
+    dS = P * (dP - D.unsqueeze(-1))
+    dq = torch.matmul(dS, k) * scale
+    dk = torch.matmul(dS.transpose(-2, -1), q) * scale
 
     return dq, dk, dv
+
+
+try:
+    _flash_attention_backward = torch.compile(_flash_backward_impl)
+    _flash_attention_backward(
+        torch.randn(1, 4, 4), torch.randn(1, 4, 4), torch.randn(1, 4, 4),
+        torch.randn(1, 4, 4), torch.randn(1, 4), torch.randn(1, 4, 4), False,
+    )
+except Exception:
+    _flash_attention_backward = _flash_backward_impl
 
 
 class FlashAttentionFunction(Function):
@@ -127,11 +102,10 @@ class FlashAttentionFunction(Function):
         O, L = _flash_attention_forward(q, k, v, is_causal, block_size)
         ctx.save_for_backward(q, k, v, O, L)
         ctx.is_causal = is_causal
-        ctx.block_size = block_size
         return O
 
     @staticmethod
     def backward(ctx, do):
         q, k, v, O, L = ctx.saved_tensors
-        dq, dk, dv = _flash_attention_backward(q, k, v, O, L, do, ctx.is_causal, ctx.block_size)
+        dq, dk, dv = _flash_attention_backward(q, k, v, O, L, do, ctx.is_causal)
         return dq, dk, dv, None, None
