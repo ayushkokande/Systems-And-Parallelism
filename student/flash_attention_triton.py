@@ -117,8 +117,21 @@ class TritonFlashAttentionFunction(Function):
         O = torch.empty_like(q)
         L = torch.empty(batch, n_queries, device=q.device, dtype=q.dtype)
 
-        Q_TILE = min(64, n_queries)
-        K_TILE = min(64, n_keys)
+        if d <= 32:
+            Q_TILE = min(128, n_queries)
+            K_TILE = min(128, n_keys)
+            num_warps = 4
+            num_stages = 2
+        elif d <= 64:
+            Q_TILE = min(64, n_queries)
+            K_TILE = min(64, n_keys)
+            num_warps = 4
+            num_stages = 2
+        else:
+            Q_TILE = min(32, n_queries)
+            K_TILE = min(32, n_keys)
+            num_warps = 4
+            num_stages = 2
         grid = (triton.cdiv(n_queries, Q_TILE), batch)
 
         flash_fwd_kernel[grid](
@@ -132,6 +145,7 @@ class TritonFlashAttentionFunction(Function):
             1.0 / math.sqrt(d),
             D=d, Q_TILE_SIZE=Q_TILE, K_TILE_SIZE=K_TILE,
             is_causal=is_causal,
+            num_warps=num_warps, num_stages=num_stages,
         )
 
         ctx.save_for_backward(q, k, v, O, L)
