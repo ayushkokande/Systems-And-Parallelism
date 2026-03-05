@@ -1,8 +1,3 @@
-"""
-Memory profiling script for the Basics Transformer model.
-Times forward and backward passes across different model sizes.
-"""
-
 import argparse
 import math
 import timeit
@@ -126,6 +121,7 @@ def main():
                 args.measure_steps, forward_only, device,
                 args.mixed_precision, args.profile_memory, size_label=name
             )
+
             rows.append({
                 "size_label": name,
                 "mode": result["mode"],

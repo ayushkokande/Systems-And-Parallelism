@@ -1,8 +1,3 @@
-"""
-Benchmarking script for the Basics Transformer model.
-Times forward and backward passes across different model sizes.
-"""
-
 import argparse
 import math
 import timeit
@@ -39,7 +34,7 @@ def benchmark_model(cfg, context_length, warmup_steps, measure_steps, forward_on
     num_params = sum(p.numel() for p in model.parameters())
     input_ids = torch.randint(0, VOCAB_SIZE, (BATCH_SIZE, context_length), device=device)
 
-    ctx = (torch.autocast(device_type ="cuda", dtype = torch.bfloat16) if mixed_precision else nullcontext())
+    ctx = (torch.autocast(device_type="cuda", dtype=torch.bfloat16) if mixed_precision else nullcontext())
 
     def step():
         with ctx:
