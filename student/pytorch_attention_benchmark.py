@@ -37,20 +37,19 @@ def benchmark_config(d_model, seq_len, device):
         end_fwd.record()
         
         mem_before_bwd = torch.cuda.memory_allocated() / (1024**2)
-        
-        loss = naive_attention(Q, K, V).sum()
-        
+
         start_bwd = torch.cuda.Event(enable_timing=True)
         end_bwd = torch.cuda.Event(enable_timing=True)
-        
         start_bwd.record()
-        loss.backward()
+        for _ in range(NUM_ITER):
+            Q.grad = K.grad = V.grad = None
+            naive_attention(Q, K, V).sum().backward()
         end_bwd.record()
 
         torch.cuda.synchronize()
-        
+
         fwd_time = start_fwd.elapsed_time(end_fwd) / NUM_ITER
-        bwd_time = start_bwd.elapsed_time(end_bwd)
+        bwd_time = start_bwd.elapsed_time(end_bwd) / NUM_ITER
         peak_mem = torch.cuda.max_memory_allocated() / (1024**2)
 
         return {
