@@ -1,0 +1,89 @@
+WARNING: While bind mounting '/scratch:/scratch': destination is already in the mount point list
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 140, in <module>
+    main()
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 111, in main
+    result = benchmark_model(cfg, args.context_length, args.warmup_steps,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 52, in benchmark_model
+    step()
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 46, in step
+    logits = model(input_ids)
+             ^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 253, in forward
+    return self.lm_head(x)
+           ^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 40, in forward
+    return einsum(x, self.weight, "... d_in, d_out d_in -> ... d_out")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/einops/einops.py", line 916, in einsum
+    return get_backend(tensors[0]).einsum(pattern, *tensors)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/einops/_backends.py", line 288, in einsum
+    return self.torch.einsum(pattern, *x)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/functional.py", line 407, in einsum
+    return _VF.einsum(equation, operands)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 40.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 28.38 MiB is free. Including non-PyTorch memory, this process has 39.45 GiB memory in use. Of the allocated memory 36.73 GiB is allocated by PyTorch, and 2.22 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 140, in <module>
+    main()
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 111, in main
+    result = benchmark_model(cfg, args.context_length, args.warmup_steps,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 52, in benchmark_model
+    step()
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/student/benchmark.py", line 46, in step
+    logits = model(input_ids)
+             ^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 247, in forward
+    x = layer(x)
+        ^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 380, in forward
+    x_attn = self.attn(self.ln1(x))
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 516, in forward
+    attn_output = scaled_dot_product_attention(K=K, Q=Q, V=V, mask=causal_mask)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/model.py", line 430, in scaled_dot_product_attention
+    attention_weights = softmax(attention_scores, dim=-1)  # Softmax over the key dimension
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ak13124/a2/nyu-llm-reasoners-a2/a1-basics/a1_basics/nn_utils.py", line 6, in softmax
+    exponentiated_rescaled_input = torch.exp(rescaled_input)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 400.00 MiB. GPU 0 has a total capacity of 39.49 GiB of which 4.38 MiB is free. Including non-PyTorch memory, this process has 39.48 GiB memory in use. Of the allocated memory 38.62 GiB is allocated by PyTorch, and 356.34 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

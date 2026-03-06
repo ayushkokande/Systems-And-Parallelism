@@ -1,0 +1,170 @@
+WARNING: While bind mounting '/scratch:/scratch': destination is already in the mount point list
+/scratch/ak13124/a2/nyu-llm-reasoners-a2/.venv/lib/python3.12/site-packages/torch/_inductor/compile_fx.py:194: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+GPU: NVIDIA A100-SXM4-40GB (42.4 GB)
+
+================================================================================
+Part (a): Attention – eager vs torch.compile
+================================================================================
+mode       | d_model  | seq      | fwd(ms)    | bwd(ms)    | mem_bwd    | peak      
+------------------------------------------------------------------------------------
+eager      | 16       | 256      | 0.135      | 0.599      | 18.63      | 24.75     
+compiled   | 16       | 256      | 0.220      | 0.553      | 18.63      | 20.88     
+eager      | 16       | 1024     | 0.398      | 0.841      | 49.75      | 146.25    
+compiled   | 16       | 1024     | 0.320      | 0.696      | 50.75      | 83.75     
+eager      | 16       | 4096     | 4.223      | 10.324     | 534.25     | 2072.25   
+compiled   | 16       | 4096     | 3.521      | 8.577      | 538.25     | 1054.25   
+eager      | 16       | 8192     | 15.257     | 37.127     | 2076.25    | 8224.25   
+compiled   | 16       | 8192     | 14.107     | 31.812     | 2084.25    | 4140.25   
+eager      | 16       | 16384    | 62.012     | 152.210    | 8232.25    | 32816.25  
+compiled   | 16       | 16384    | 57.191     | 119.231    | 8248.25    | 16456.25  
+eager      | 32       | 256      | 0.121      | 0.539      | 19.00      | 25.25     
+compiled   | 32       | 256      | 0.298      | 0.569      | 19.00      | 21.50     
+eager      | 32       | 1024     | 0.347      | 0.869      | 51.25      | 148.25    
+compiled   | 32       | 1024     | 0.345      | 0.713      | 51.25      | 85.25     
+eager      | 32       | 4096     | 4.454      | 10.573     | 540.25     | 2080.25   
+compiled   | 32       | 4096     | 4.504      | 9.418      | 540.25     | 1060.25   
+eager      | 32       | 8192     | 16.164     | 38.130     | 2088.25    | 8240.25   
+compiled   | 32       | 8192     | 16.448     | 32.891     | 2088.25    | 4152.25   
+eager      | 32       | 16384    | 65.561     | 155.756    | 8256.25    | 32848.25  
+compiled   | 32       | 16384    | 59.608     | 120.270    | 8256.25    | 16480.25  
+eager      | 64       | 256      | 0.120      | 0.537      | 19.75      | 26.25     
+compiled   | 64       | 256      | 0.296      | 0.613      | 19.75      | 22.75     
+eager      | 64       | 1024     | 0.382      | 0.910      | 54.25      | 152.25    
+compiled   | 64       | 1024     | 0.397      | 0.795      | 54.25      | 90.25     
+eager      | 64       | 4096     | 4.904      | 11.048     | 552.25     | 2096.25   
+compiled   | 64       | 4096     | 4.143      | 9.052      | 552.25     | 1080.25   
+eager      | 64       | 8192     | 17.993     | 39.974     | 2112.25    | 8272.25   
+compiled   | 64       | 8192     | 15.134     | 31.514     | 2112.25    | 4192.25   
+eager      | 64       | 16384    | 72.764     | 163.058    | 8304.25    | 32912.25  
+compiled   | 64       | 16384    | 66.824     | 129.465    | 8304.25    | 16560.25  
+eager      | 128      | 256      | 0.120      | 0.538      | 21.25      | 28.25     
+compiled   | 128      | 256      | 0.297      | 0.581      | 21.25      | 25.25     
+eager      | 128      | 1024     | 0.441      | 0.979      | 60.25      | 160.25    
+compiled   | 128      | 1024     | 0.455      | 0.864      | 60.25      | 100.25    
+eager      | 128      | 4096     | 5.770      | 11.960     | 576.25     | 2128.25   
+compiled   | 128      | 4096     | 5.001      | 9.965      | 576.25     | 1120.25   
+eager      | 128      | 8192     | 21.439     | 43.467     | 2160.25    | 8336.25   
+compiled   | 128      | 8192     | 18.582     | 35.068     | 2160.25    | 4272.25   
+eager      | 128      | 16384    | 86.555     | 176.956    | 8400.25    | 33040.25  
+compiled   | 128      | 16384    | 80.566     | 143.330    | 8400.25    | 16720.25  
+
+=== Part (a) Results ===
+    mode  d_model   seq    fwd_ms     bwd_ms  mem_before_bwd_mb      peak_mb
+   eager       16   256  0.134984   0.599470          18.625488    24.750977
+compiled       16   256  0.220416   0.552520          18.625488    20.875977
+   eager       16  1024  0.397793   0.841093          49.750488   146.250977
+compiled       16  1024  0.319887   0.696248          50.750488    83.750977
+   eager       16  4096  4.223386  10.324131         534.250488  2072.250977
+compiled       16  4096  3.520747   8.577383         538.250488  1054.250977
+   eager       16  8192 15.257129  37.127280        2076.250488  8224.250977
+compiled       16  8192 14.107197  31.812319        2084.250488  4140.250977
+   eager       16 16384 62.011782 152.209937        8232.250488 32816.250977
+compiled       16 16384 57.190894 119.231411        8248.250488 16456.250977
+   eager       32   256  0.121457   0.539115          19.000488    25.250977
+compiled       32   256  0.297810   0.568945          19.000488    21.500977
+   eager       32  1024  0.346675   0.868618          51.250488   148.250977
+compiled       32  1024  0.344535   0.713380          51.250488    85.250977
+   eager       32  4096  4.453581  10.573015         540.250488  2080.250977
+compiled       32  4096  4.503931   9.417635         540.250488  1060.250977
+   eager       32  8192 16.164240  38.130145        2088.250488  8240.250977
+compiled       32  8192 16.448440  32.890706        2088.250488  4152.250977
+   eager       32 16384 65.561294 155.756167        8256.250488 32848.250977
+compiled       32 16384 59.607993 120.269585        8256.250488 16480.250977
+   eager       64   256  0.119869   0.537057          19.750488    26.250977
+compiled       64   256  0.296100   0.613304          19.750488    22.750977
+   eager       64  1024  0.382147   0.909650          54.250488   152.250977
+compiled       64  1024  0.396544   0.794860          54.250488    90.250977
+   eager       64  4096  4.903782  11.048345         552.250488  2096.250977
+compiled       64  4096  4.142623   9.052324         552.250488  1080.250977
+   eager       64  8192 17.992806  39.973756        2112.250488  8272.250977
+compiled       64  8192 15.134075  31.513630        2112.250488  4192.250977
+   eager       64 16384 72.764121 163.058320        8304.250488 32912.250977
+compiled       64 16384 66.824160 129.465332        8304.250488 16560.250977
+   eager      128   256  0.119736   0.537999          21.250488    28.250977
+compiled      128   256  0.297308   0.581059          21.250488    25.250977
+   eager      128  1024  0.441149   0.979456          60.250488   160.250977
+compiled      128  1024  0.455475   0.863611          60.250488   100.250977
+   eager      128  4096  5.769503  11.960361         576.250488  2128.250977
+compiled      128  4096  5.000755   9.964861         576.250488  1120.250977
+   eager      128  8192 21.439497  43.467183        2160.250488  8336.250977
+compiled      128  8192 18.582272  35.067914        2160.250488  4272.250977
+   eager      128 16384 86.555400 176.956162        8400.250488 33040.250977
+compiled      128 16384 80.566489 143.329995        8400.250488 16720.250977
+Saved to compile_attn.csv
+
+================================================================================
+Part (b): Full Transformer – vanilla vs torch.compile
+================================================================================
+
+--- small (d_model=768, layers=12) ---
+  forward                         mean=   36.01 ms  std=  0.09 ms
+  forward+compiled                mean=   10.42 ms  std=  0.01 ms
+  forward+backward                mean=   78.19 ms  std=  2.28 ms
+  forward+backward+compiled       mean=   32.09 ms  std=  0.05 ms
+  train                           mean=  101.47 ms  std=  1.31 ms
+  train+compiled                  mean=   45.40 ms  std=  0.06 ms
+
+--- medium (d_model=1024, layers=24) ---
+  forward                         mean=   75.99 ms  std=  1.79 ms
+  forward+compiled                mean=   31.47 ms  std=  0.16 ms
+  forward+backward                mean=  155.84 ms  std=  0.97 ms
+  forward+backward+compiled       mean=   97.71 ms  std=  0.07 ms
+  train                           mean=  208.45 ms  std=  9.18 ms
+  train+compiled                  mean=  139.78 ms  std=  0.64 ms
+
+--- large (d_model=1280, layers=36) ---
+  forward                         mean=  118.45 ms  std=  3.87 ms
+  forward+compiled                mean=   64.68 ms  std=  0.11 ms
+  forward+backward                mean=  269.81 ms  std=  2.41 ms
+  forward+backward+compiled       mean=  200.61 ms  std=  0.06 ms
+  train                           mean=  376.21 ms  std=  2.68 ms
+  train+compiled                  mean=  304.16 ms  std=  0.12 ms
+
+--- xl (d_model=1600, layers=48) ---
+  forward                         mean=  156.00 ms  std=  4.70 ms
+  forward+compiled                mean=  134.72 ms  std=  0.14 ms
+  forward+backward                mean=  457.40 ms  std=  4.66 ms
+  forward+backward+compiled       mean=  411.19 ms  std=  0.12 ms
+  train                           mean=  665.88 ms  std=  2.37 ms
+  train+compiled                  mean=  619.45 ms  std=  0.26 ms
+
+--- 2.7B (d_model=2560, layers=32) ---
+  forward                         mean=  225.83 ms  std=  0.29 ms
+  forward+compiled                mean=  209.18 ms  std=  0.07 ms
+  forward+backward                mean=  676.34 ms  std=  0.18 ms
+  forward+backward+compiled       mean=  639.33 ms  std=  0.04 ms
+  train                           OOM
+  train+compiled                  OOM
+
+=== Part (b) Results ===
+  size                      mode  num_params_m    mean_ms   std_ms  context_length
+ small                   forward    128.625408  36.011711 0.091795             128
+ small          forward+compiled    128.625408  10.421250 0.011336             128
+ small          forward+backward    128.625408  78.186011 2.284454             128
+ small forward+backward+compiled    128.625408  32.087896 0.046064             128
+ small                     train    128.625408 101.469472 1.308798             128
+ small            train+compiled    128.625408  45.397618 0.058654             128
+medium                   forward    423.183360  75.994566 1.785307             128
+medium          forward+compiled    423.183360  31.466521 0.160003             128
+medium          forward+backward    423.183360 155.843984 0.968613             128
+medium forward+backward+compiled    423.183360  97.710471 0.074800             128
+medium                     train    423.183360 208.451533 9.181153             128
+medium            train+compiled    423.183360 139.776265 0.640724             128
+ large                   forward    969.411840 118.454601 3.873245             128
+ large          forward+compiled    969.411840  64.681046 0.114217             128
+ large          forward+backward    969.411840 269.809495 2.410827             128
+ large forward+backward+compiled    969.411840 200.612218 0.060507             128
+ large                     train    969.411840 376.206592 2.676604             128
+ large            train+compiled    969.411840 304.162755 0.123354             128
+    xl                   forward   1998.235200 155.999265 4.699887             128
+    xl          forward+compiled   1998.235200 134.721193 0.135574             128
+    xl          forward+backward   1998.235200 457.403923 4.657794             128
+    xl forward+backward+compiled   1998.235200 411.191845 0.116668             128
+    xl                     train   1998.235200 665.879926 2.369833             128
+    xl            train+compiled   1998.235200 619.454181 0.262269             128
+  2.7B                   forward   3406.809600 225.828257 0.288401             128
+  2.7B          forward+compiled   3406.809600 209.180345 0.065597             128
+  2.7B          forward+backward   3406.809600 676.341245 0.180911             128
+  2.7B forward+backward+compiled   3406.809600 639.327670 0.043215             128
+Saved to compile_model.csv

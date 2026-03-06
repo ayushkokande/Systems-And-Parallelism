@@ -1,0 +1,3 @@
+size_label,mode,num_params_m,warmup_steps,measure_steps,mean_ms,std_ms,context_length,mixed_precision
+small,forward,128.625408,5,10,40.981889600004706,0.3616242544803733,512,True
+small,forward+backward,128.625408,5,10,84.17447029999607,0.404757292684512,512,True

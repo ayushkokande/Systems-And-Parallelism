@@ -1,0 +1,182 @@
+=== Benchmarking all sizes | context=128 | mixed precision ===
+Device: cuda
+  GPU: NVIDIA A100-SXM4-40GB (42.4 GB)
+  Mixed precision: BF16 (torch.autocast)
+
+============================================================
+Benchmarking: small (d_model=768, layers=12, heads=12, d_ff=3072)
+  context_length=128, warmup=5, measure=10
+============================================================
+  forward               mean=   40.71 ms  std=  0.43 ms  params=128.6M
+  forward+backward      mean=   87.14 ms  std=  3.40 ms  params=128.6M
+
+============================================================
+Benchmarking: medium (d_model=1024, layers=24, heads=16, d_ff=4096)
+  context_length=128, warmup=5, measure=10
+============================================================
+  forward               mean=   82.32 ms  std=  0.33 ms  params=423.2M
+  forward+backward      mean=  172.37 ms  std=  3.46 ms  params=423.2M
+
+============================================================
+Benchmarking: large (d_model=1280, layers=36, heads=20, d_ff=5120)
+  context_length=128, warmup=5, measure=10
+============================================================
+  forward               mean=  125.89 ms  std=  3.77 ms  params=969.4M
+  forward+backward      mean=  259.42 ms  std=  3.60 ms  params=969.4M
+
+============================================================
+Benchmarking: xl (d_model=1600, layers=48, heads=25, d_ff=6400)
+  context_length=128, warmup=5, measure=10
+============================================================
+  forward               mean=  165.90 ms  std=  1.64 ms  params=1998.2M
+  forward+backward      mean=  348.45 ms  std=  4.17 ms  params=1998.2M
+
+============================================================
+Benchmarking: 2.7B (d_model=2560, layers=32, heads=32, d_ff=10240)
+  context_length=128, warmup=5, measure=10
+============================================================
+  forward               mean=  113.04 ms  std=  1.23 ms  params=3406.8M
+  forward+backward      mean=  240.42 ms  std=  4.21 ms  params=3406.8M
+
+============================================================
+RESULTS SUMMARY
+============================================================
+size_label             mode  num_params_m  warmup_steps  measure_steps    mean_ms   std_ms  context_length  mixed_precision
+     small          forward    128.625408             5             10  40.707720 0.430169             128             True
+     small forward+backward    128.625408             5             10  87.136205 3.396286             128             True
+    medium          forward    423.183360             5             10  82.317077 0.330017             128             True
+    medium forward+backward    423.183360             5             10 172.367877 3.457870             128             True
+     large          forward    969.411840             5             10 125.891212 3.773845             128             True
+     large forward+backward    969.411840             5             10 259.415831 3.597177             128             True
+        xl          forward   1998.235200             5             10 165.895415 1.640475             128             True
+        xl forward+backward   1998.235200             5             10 348.448228 4.169054             128             True
+      2.7B          forward   3406.809600             5             10 113.036570 1.229141             128             True
+      2.7B forward+backward   3406.809600             5             10 240.421605 4.210255             128             True
+
+Results saved to benchmark_results_ctx128_bf16.csv
+=== Benchmarking all sizes | context=256 | mixed precision ===
+Device: cuda
+  GPU: NVIDIA A100-SXM4-40GB (42.4 GB)
+  Mixed precision: BF16 (torch.autocast)
+
+============================================================
+Benchmarking: small (d_model=768, layers=12, heads=12, d_ff=3072)
+  context_length=256, warmup=5, measure=10
+============================================================
+  forward               mean=   41.48 ms  std=  0.17 ms  params=128.6M
+  forward+backward      mean=   88.34 ms  std=  2.26 ms  params=128.6M
+
+============================================================
+Benchmarking: medium (d_model=1024, layers=24, heads=16, d_ff=4096)
+  context_length=256, warmup=5, measure=10
+============================================================
+  forward               mean=   84.04 ms  std=  3.03 ms  params=423.2M
+  forward+backward      mean=  173.45 ms  std=  1.84 ms  params=423.2M
+
+============================================================
+Benchmarking: large (d_model=1280, layers=36, heads=20, d_ff=5120)
+  context_length=256, warmup=5, measure=10
+============================================================
+  forward               mean=  121.85 ms  std=  0.40 ms  params=969.4M
+  forward+backward      mean=  261.84 ms  std=  6.11 ms  params=969.4M
+
+============================================================
+Benchmarking: xl (d_model=1600, layers=48, heads=25, d_ff=6400)
+  context_length=256, warmup=5, measure=10
+============================================================
+  forward               mean=  164.60 ms  std=  3.15 ms  params=1998.2M
+  forward+backward      mean=  351.28 ms  std=  9.75 ms  params=1998.2M
+
+============================================================
+Benchmarking: 2.7B (d_model=2560, layers=32, heads=32, d_ff=10240)
+  context_length=256, warmup=5, measure=10
+============================================================
+  forward               mean=  109.94 ms  std=  1.21 ms  params=3406.8M
+  forward+backward      mean=  298.53 ms  std=  1.61 ms  params=3406.8M
+
+============================================================
+RESULTS SUMMARY
+============================================================
+size_label             mode  num_params_m  warmup_steps  measure_steps    mean_ms   std_ms  context_length  mixed_precision
+     small          forward    128.625408             5             10  41.483580 0.169775             256             True
+     small forward+backward    128.625408             5             10  88.343799 2.256242             256             True
+    medium          forward    423.183360             5             10  84.044079 3.032281             256             True
+    medium forward+backward    423.183360             5             10 173.448371 1.843187             256             True
+     large          forward    969.411840             5             10 121.853660 0.400233             256             True
+     large forward+backward    969.411840             5             10 261.843795 6.113035             256             True
+        xl          forward   1998.235200             5             10 164.603318 3.153593             256             True
+        xl forward+backward   1998.235200             5             10 351.275269 9.753851             256             True
+      2.7B          forward   3406.809600             5             10 109.939489 1.210883             256             True
+      2.7B forward+backward   3406.809600             5             10 298.534627 1.608171             256             True
+
+Results saved to benchmark_results_ctx256_bf16.csv
+=== Benchmarking all sizes | context=512 | mixed precision ===
+Device: cuda
+  GPU: NVIDIA A100-SXM4-40GB (42.4 GB)
+  Mixed precision: BF16 (torch.autocast)
+
+============================================================
+Benchmarking: small (d_model=768, layers=12, heads=12, d_ff=3072)
+  context_length=512, warmup=5, measure=10
+============================================================
+  forward               mean=   43.15 ms  std=  2.47 ms  params=128.6M
+  forward+backward      mean=   86.92 ms  std=  1.85 ms  params=128.6M
+
+============================================================
+Benchmarking: medium (d_model=1024, layers=24, heads=16, d_ff=4096)
+  context_length=512, warmup=5, measure=10
+============================================================
+  forward               mean=   84.56 ms  std=  2.13 ms  params=423.2M
+  forward+backward      mean=  177.77 ms  std=  8.11 ms  params=423.2M
+
+============================================================
+Benchmarking: large (d_model=1280, layers=36, heads=20, d_ff=5120)
+  context_length=512, warmup=5, measure=10
+============================================================
+  forward               mean=  125.40 ms  std=  3.60 ms  params=969.4M
+  forward+backward      mean=  295.21 ms  std=  0.56 ms  params=969.4M
+
+============================================================
+Benchmarking: xl (d_model=1600, layers=48, heads=25, d_ff=6400)
+  context_length=512, warmup=5, measure=10
+============================================================
+  forward               mean=  169.50 ms  std=  3.02 ms  params=1998.2M
+  forward+backward      mean=  462.05 ms  std=  0.97 ms  params=1998.2M
+
+============================================================
+Benchmarking: 2.7B (d_model=2560, layers=32, heads=32, d_ff=10240)
+  context_length=512, warmup=5, measure=10
+============================================================
+FAILED: ctx=512
+=== Benchmarking all sizes | context=1024 | mixed precision ===
+Device: cuda
+  GPU: NVIDIA A100-SXM4-40GB (42.4 GB)
+  Mixed precision: BF16 (torch.autocast)
+
+============================================================
+Benchmarking: small (d_model=768, layers=12, heads=12, d_ff=3072)
+  context_length=1024, warmup=5, measure=10
+============================================================
+  forward               mean=   44.15 ms  std=  0.13 ms  params=128.6M
+  forward+backward      mean=  127.37 ms  std=  0.23 ms  params=128.6M
+
+============================================================
+Benchmarking: medium (d_model=1024, layers=24, heads=16, d_ff=4096)
+  context_length=1024, warmup=5, measure=10
+============================================================
+  forward               mean=  119.82 ms  std=  0.48 ms  params=423.2M
+  forward+backward      mean=  353.02 ms  std=  0.35 ms  params=423.2M
+
+============================================================
+Benchmarking: large (d_model=1280, layers=36, heads=20, d_ff=5120)
+  context_length=1024, warmup=5, measure=10
+============================================================
+  forward               mean=  225.59 ms  std=  0.20 ms  params=969.4M
+  forward+backward      mean=  658.36 ms  std=  0.10 ms  params=969.4M
+
+============================================================
+Benchmarking: xl (d_model=1600, layers=48, heads=25, d_ff=6400)
+  context_length=1024, warmup=5, measure=10
+============================================================
+FAILED: ctx=1024
+All BF16 benchmarking runs completed successfully!
