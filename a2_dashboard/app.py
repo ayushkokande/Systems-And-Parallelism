@@ -236,4 +236,8 @@ with gr.Blocks(title="CS336 a2 — GPU Performance Dashboard", theme=gr.themes.S
 
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
+    if os.environ.get("SPACE_ID"):
+        # HuggingFace Spaces sets server name/port via env; let Gradio use them.
+        demo.launch()
+    else:
+        demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
