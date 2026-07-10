@@ -7,6 +7,10 @@
     "pyre2.pythonPath": "${workspaceFolder}/.venv/bin/python",
     "pyre2.searchPaths": [
         "${workspaceFolder}/.venv/lib/python3.12/site-packages",
-        "${workspaceFolder}/a1-basics"
-    ]
+        "${workspaceFolder}/lm-basics"
+    ],
+    "cursorpyright.analysis.extraPaths": [
+        "${workspaceFolder}/.venv/lib/python3.12/site-packages"
+    ],
+    "cursorpyright.analysis.typeCheckingMode": "off"
 }

@@ -14,7 +14,7 @@ def get_flashattention_autograd_function_pytorch() -> Type:
     Returns:
         A class object (not an instance of the class)
     """
-    from student.flash_attention import FlashAttentionFunction
+    from systems.flash_attention import FlashAttentionFunction
     return FlashAttentionFunction
 
 
@@ -30,7 +30,7 @@ def get_flashattention_autograd_function_triton() -> Type:
     Returns:
         A class object (not an instance of the class)
     """
-    from student.flash_attention_triton import TritonFlashAttentionFunction
+    from systems.flash_attention_triton import TritonFlashAttentionFunction
     return TritonFlashAttentionFunction
 
 

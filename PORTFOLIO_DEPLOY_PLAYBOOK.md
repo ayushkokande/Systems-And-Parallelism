@@ -1,7 +1,7 @@
 # Portfolio Deploy Playbook
 
-Turn any ML project into a hosted, embeddable demo. Distilled from shipping the
-CS336 a1 Transformer LM as a live HuggingFace Space embedded in a portfolio site.
+Turn any ML project into a hosted, embeddable demo. Distilled from shipping a
+from-scratch Transformer LM as a live HuggingFace Space embedded in a portfolio site.
 
 ---
 
@@ -74,7 +74,7 @@ scales to zero.
 ## When the project isn't generative (systems/benchmark work)
 
 Not every project is "type prompt → get output." For benchmarking, profiling, or
-systems work (e.g. CS336 a2), the deliverable is **measurements**, not a live
+systems work (like this repo), the deliverable is **measurements**, not a live
 model. The portfolio move:
 
 1. Run the expensive benchmarks **once** on a GPU; save results (CSV/pickle).

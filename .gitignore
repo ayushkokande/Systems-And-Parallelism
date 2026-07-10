@@ -2,6 +2,26 @@
 cs336-spring2024-assignment-2-submission.zip
 test_results.xml
 
+# Local-only artifacts (kept out of the public repo)
+.DS_Store
+*.bak
+*.pdf
+*resume*
+*Resume*
+ak13124*
+writeup*
+report*
+
+# Large profiling artifacts / checkpoints
+systems/batch_results/nsys_reports/
+*.nsys-rep
+*.nsys-rep.*
+systems/batch_scripts/**/logs/
+systems/batch_scripts/**/*.out
+systems/batch_scripts/**/*.err
+checkpoints/
+data/raw/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
